@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PassShield Entropy Meter | مقياس إنتروبيا وقوة كلمات المرور</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="logo-area">
+        <div class="logo-icon">🛡️</div>
+        <div class="logo-text">
+          <h1 data-i18n="appTitle">PassShield Entropy Meter</h1>
+          <p class="subtitle" data-i18n="appSubtitle">مقياس رياضي لإنتروبيا كلمات المرور وتقدير زمن الاختراق ومولد آمن</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <div class="offline-pill">
+          <span class="dot-green"></span>
+          <span data-i18n="offlineBadge">آمن 100% بدون إنترنت</span>
+        </div>
+        <button id="langToggleBtn" class="action-btn">
+          <span>🌐</span>
+          <span id="langText">English</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Grid -->
+    <main class="main-grid">
+      <!-- Left Column: Password Analyzer -->
+      <section class="card analyzer-card">
+        <div class="card-header">
+          <h2 data-i18n="analyzeTitle">فحص كلمة المرور</h2>
+          <span class="badge-accent" data-i18n="badgeMath">معيار شانون (Shannon)</span>
+        </div>
+
+        <div class="input-wrapper">
+          <input type="password" id="passwordInput" placeholder="أدخل كلمة المرور هنا لتحليلها..." autocomplete="off" spellcheck="false">
+          <button id="toggleVisibilityBtn" class="icon-btn" title="إظهار / إخفاء">👁️</button>
+        </div>
+
+        <!-- Strength Meter Bar -->
+        <div class="meter-wrapper">
+          <div class="meter-header">
+            <span class="strength-label" id="strengthLabel" data-i18n="strEnterPass">بانتظار إدخال كلمة المرور</span>
+            <span class="entropy-score" id="entropyScore">0.00 Bits</span>
+          </div>
+          <div class="meter-track">
+            <div class="meter-fill" id="meterFill" style="width: 0%;"></div>
+          </div>
+        </div>
+
+        <!-- Key Metrics Cards -->
+        <div class="metrics-grid">
+          <div class="metric-item">
+            <span class="m-title" data-i18n="lblLength">الطول الكلي</span>
+            <span class="m-val" id="metricLength">0</span>
+          </div>
+          <div class="metric-item">
+            <span class="m-title" data-i18n="lblPool">فضاء الحروف (N)</span>
+            <span class="m-val" id="metricPool">0</span>
+          </div>
+          <div class="metric-item">
+            <span class="m-title" data-i18n="lblCombos">مجموع التباديل</span>
+            <span class="m-val" id="metricCombos">0</span>
+          </div>
+        </div>
+
+        <!-- Time to Crack Estimates -->
+        <div class="crack-time-section">
+          <h3 data-i18n="crackEstimates">تقدير زمن الاختراق بالقوة العمياء (Brute-Force)</h3>
+          <div class="crack-grid">
+            <div class="crack-row">
+              <div class="crack-type">
+                <span class="icon">🌐</span>
+                <span data-i18n="scenarioWeb">هجوم ويب مقيد (100 محاولة/ث)</span>
+              </div>
+              <span class="crack-time" id="timeOnline">فوري</span>
+            </div>
+            <div class="crack-row">
+              <div class="crack-type">
+                <span class="icon">⚡</span>
+                <span data-i18n="scenarioFast">هجوم خادم سريع (1,000 محاولة/ث)</span>
+              </div>
+              <span class="crack-time" id="timeFast">فوري</span>
+            </div>
+            <div class="crack-row">
+              <div class="crack-type">
+                <span class="icon">💻</span>
+                <span data-i18n="scenarioGpu">مزرعة كروت شاشة GPU (10 مليار محاولة/ث)</span>
+              </div>
+              <span class="crack-time" id="timeGpu">فوري</span>
+            </div>
+            <div class="crack-row">
+              <div class="crack-type">
+                <span class="icon">🚀</span>
+                <span data-i18n="scenarioSuper">حاسوب فائق خارق (100 تريليون محاولة/ث)</span>
+              </div>
+              <span class="crack-time" id="timeSuper">فوري</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Criteria Checklist -->
+        <div class="checklist-section">
+          <h3 data-i18n="criteriaTitle">معايير المتانة والتنوع</h3>
+          <ul class="criteria-list">
+            <li id="critLength" class="crit-item">
+              <span class="status-icon">❌</span>
+              <span data-i18n="critLen12">طول كافٍ (12 حرفاً على الأقل)</span>
+            </li>
+            <li id="critUpper" class="crit-item">
+              <span class="status-icon">❌</span>
+              <span data-i18n="critUpper">أحرف كبيرة (A-Z)</span>
+            </li>
+            <li id="critLower" class="crit-item">
+              <span class="status-icon">❌</span>
+              <span data-i18n="critLower">أحرف صغيرة (a-z)</span>
+            </li>
+            <li id="critDigits" class="crit-item">
+              <span class="status-icon">❌</span>
+              <span data-i18n="critDigits">أرقام (0-9)</span>
+            </li>
+            <li id="critSymbols" class="crit-item">
+              <span class="status-icon">❌</span>
+              <span data-i18n="critSymbols">رموز خاصة (!@#$%)</span>
+            </li>
+            <li id="critPatterns" class="crit-item">
+              <span class="status-icon">✔</span>
+              <span data-i18n="critNoCommon">خلو من الأنماط المتكررة والشائعة</span>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Right Column: Cryptographic Generator -->
+      <section class="card generator-card">
+        <div class="card-header">
+          <h2 data-i18n="genTitle">توليد كلمة مرور فائقة الأمان</h2>
+          <span class="badge-accent" data-i18n="badgeCrypto">تشفير WebCrypto</span>
+        </div>
+
+        <!-- Generated Result Display -->
+        <div class="gen-output-box">
+          <div class="gen-text" id="genResult">اضغط زر التوليد بالأسفل</div>
+          <button id="copyGenBtn" class="btn btn-copy" title="نسخ إلى الحافظة">
+            <span id="copyIcon">📋</span>
+            <span data-i18n="btnCopy">نسخ</span>
+          </button>
+        </div>
+
+        <!-- Generator Controls -->
+        <div class="gen-controls">
+          <div class="control-row">
+            <label for="genLength">
+              <span data-i18n="genLengthLbl">طول كلمة المرور:</span>
+              <strong id="genLengthVal">18</strong>
+            </label>
+            <input type="range" id="genLength" min="8" max="48" value="18">
+          </div>
+
+          <div class="toggles-grid">
+            <label class="toggle-card">
+              <input type="checkbox" id="chkUpper" checked>
+              <div class="toggle-content">
+                <span class="toggle-title" data-i18n="chkUpper">أحرف كبيرة (A-Z)</span>
+                <span class="toggle-sub">ABCDEF...</span>
+              </div>
+            </label>
+
+            <label class="toggle-card">
+              <input type="checkbox" id="chkLower" checked>
+              <div class="toggle-content">
+                <span class="toggle-title" data-i18n="chkLower">أحرف صغيرة (a-z)</span>
+                <span class="toggle-sub">abcdef...</span>
+              </div>
+            </label>
+
+            <label class="toggle-card">
+              <input type="checkbox" id="chkDigits" checked>
+              <div class="toggle-content">
+                <span class="toggle-title" data-i18n="chkDigits">أرقام (0-9)</span>
+                <span class="toggle-sub">012345...</span>
+              </div>
+            </label>
+
+            <label class="toggle-card">
+              <input type="checkbox" id="chkSymbols" checked>
+              <div class="toggle-content">
+                <span class="toggle-title" data-i18n="chkSymbols">رموز خاصة</span>
+                <span class="toggle-sub">!@#$%^&*()</span>
+              </div>
+            </label>
+
+            <label class="toggle-card full-width">
+              <input type="checkbox" id="chkAvoidSimilar" checked>
+              <div class="toggle-content">
+                <span class="toggle-title" data-i18n="chkAvoidSimilar">استبعاد الحروف المتشابهة</span>
+                <span class="toggle-sub">(تجنب 0, O, l, 1, I)</span>
+              </div>
+            </label>
+          </div>
+
+          <div class="gen-actions">
+            <button id="generateBtn" class="btn btn-primary full-btn">
+              <span>⚡</span>
+              <span data-i18n="btnGenerate">توليد كلمة مرور جديدة</span>
+            </button>
+            <button id="generatePassphraseBtn" class="btn btn-secondary full-btn">
+              <span>📖</span>
+              <span data-i18n="btnPassphrase">توليد عبارة مرور (Diceware)</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Educational Formula Card -->
+        <div class="formula-box">
+          <h4 data-i18n="formulaTitle">كيف تُحسب الإنتروبيا الرياضية؟</h4>
+          <p class="formula-math">H = L &times; log<sub>2</sub>(N)</p>
+          <p class="formula-desc" data-i18n="formulaDesc">
+            حيث <strong>L</strong> يمثل طول الكلمة، و <strong>N</strong> حجم فضاء الرموز الممكنة. كلما زادت قيمة H عن 60 بت، أصبحت الكلمة صامدة أمام هجمات القوة العمياء لأعوام وعقود.
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p>
+        <span>PassShield Entropy Meter &copy; 2026 | تطوير:</span>
+        <a href="https://github.com/Tareq0001" target="_blank" rel="noopener">أ. طارق ابوعشي (Tareq Aboushi)</a>
+      </p>
+    </footer>
+  </div>
+
+  <div id="toast" class="toast">تم النسخ بنجاح!</div>
+
+  <script src="app.js"></script>
+</body>
+</html>
